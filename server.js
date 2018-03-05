@@ -207,16 +207,16 @@ app.configure('development', function () {
 });
 
 
-let generateToken = user => {
+var generateToken = user => {
 
-    let token = jwt.sign({ id: user._id, name: user.name }, secretWord,
+    var token = jwt.sign({ id: user._id, name: user.name }, secretWord,
         { expiresIn: "2 years" });
     return token;
 };
 
-let validateToken = token => {
+var validateToken = token => {
     try {
-        let result = jwt.verify(token, secretWord);
+        var result = jwt.verify(token, secretWord);
         return result;
     } catch (e) {
         console.log("Error validating token");
@@ -225,7 +225,7 @@ let validateToken = token => {
 
 app.post('/register', (req, res) => {
     // Get user credentials from the request
-    let user = {
+    var user = {
         name: req.body.name,
         //Encripted password sha
         password: sha(req.body.password)
@@ -247,7 +247,7 @@ app.post('/register', (req, res) => {
         res.send(result);
     });*/
 
-    let result = { ok: true };
+    var result = { ok: true };
     res.send(user);
 
 });

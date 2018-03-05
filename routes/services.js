@@ -13,7 +13,7 @@ module.exports = function (app) {
             password: sha(req.body.password)
         };
 
-        var userEncontrado = db.buscaUser();
+        var userEncontrado = db.buscaUser(req.body.name);
 
         var result = {
             ok: true,

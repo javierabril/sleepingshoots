@@ -15,7 +15,7 @@ var express = require('express')
  /* , everyauth = require('everyauth')
   , Recaptcha = require('recaptcha').Recaptcha;*/
 
-var db = require('dbazure.js');
+//var db = require('dbazure.js');
 
 /**
 * CONFIGURATION

@@ -1,4 +1,3 @@
-
 /**
 * MODULE DEPENDENCIES
 * -------------------------------------------------------------------------------------------------
@@ -12,8 +11,8 @@ var express = require('express')
     , jwt = require('jsonwebtoken')
     , sha = require('sha256')
     , path = require('path');
- /* , everyauth = require('everyauth')
-  , Recaptcha = require('recaptcha').Recaptcha;*/
+/* , everyauth = require('everyauth')
+ , Recaptcha = require('recaptcha').Recaptcha;*/
 
 //var db = require('dbazure.js');
 
@@ -198,7 +197,9 @@ app.configure(function () {
     app.use(app.router);
     app.use(require('less-middleware')({ src: __dirname + '/public' }));
     app.use(express.static(path.join(__dirname, 'public')));*/
-    app.use(bodyParser.json());
+    app.use(express.logger('dev'));
+    app.use(express.bodyParser());
+    // app.use(bodyParser.json());
 
 });
 
@@ -207,14 +208,14 @@ app.configure('development', function () {
 });
 
 
-function generateToken (user) {
+function generateToken(user) {
 
     var token = jwt.sign({ id: user._id, name: user.name }, secretWord,
         { expiresIn: "2 years" });
     return token;
 };
 
-function validateToken (token) {
+function validateToken(token) {
 
     try {
         var result = jwt.verify(token, secretWord);

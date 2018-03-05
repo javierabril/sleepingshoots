@@ -9,7 +9,8 @@ var Connection = require('tedious').Connection;
     var connection = new Connection(config);  
     connection.on('connect', function(err) {  
     // If no error, then good to proceed.  
-        console.log("Connected");  
+        console.log("Conectado a BD");  
+        buscaUser("javi");
     });  
 
     var Request = require('tedious').Request;

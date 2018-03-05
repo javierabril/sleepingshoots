@@ -52,7 +52,8 @@ module.exports = function (app) {
             console.log(rowCount + ' rows returned');
             numFilas = rowCount;
         });
-        connection.execSql(request);
+
+        db.connection.execSql(request);
 
         return numFilas;
     }  

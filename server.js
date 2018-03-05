@@ -225,7 +225,7 @@ function validateToken (token) {
 
 };
 
-app.post('/register', (req, res) => {
+app.post('/register', (req, res) {
     // Get user credentials from the request
     var user = {
         name: req.body.name,

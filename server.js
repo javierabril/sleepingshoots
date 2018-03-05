@@ -9,15 +9,17 @@ let fs = require('fs');
 
 
 
-mongoose.Promise = global.Promise;
+/*mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/book-service',
     { useMongoClient: true });
 
+*/
 
 const secretWord = "miclave";
 
 let app = express();
 
+app.set('port', process.env.PORT || 3000);
 app.use(bodyParser.json());
 // use morgan to log requests to the console
 app.use(morgan('dev'));
@@ -44,8 +46,6 @@ let validateToken = token => {
         console.log("Error validating token");
     }
 };
-
-
 
 app.post('/login', (req, res) => {
     // Get user credentials from the request
@@ -99,7 +99,7 @@ app.post('/register', (req, res) => {
         password: user.password
     });
 
-
+    /*
     newUser.save().then(data => {
         let result = { ok: true};
         res.send(result);
@@ -109,9 +109,12 @@ app.post('/register', (req, res) => {
             error: "User couldn't be registered"
         };
         res.send(result);
-    });
-});
+    });*/
 
+    console.log(newUser);
+
+});
+/*
 app.get('/books', function (req, res) {
     let token = req.headers['authorization'];
     let result = validateToken(token);
@@ -423,6 +426,8 @@ app.post('/comments/:bookId', (req, res) => {
     }
 
 }); 
+*/
 
-
-app.listen(8080);
+app.listen(app.get('port'), function () {
+    console.log("Express server listening on port " + app.get('port'));
+});

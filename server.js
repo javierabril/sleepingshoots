@@ -26,9 +26,9 @@ app.use(morgan('dev'));
 
 
 //Assign our created models
-let Comments = require('./app/models/Comments');
-let Users = require('./app/models/Users');
-let Books = require('./app/models/Books');
+//let Comments = require('./app/models/Comments');
+//let Users = require('./app/models/Users');
+//let Books = require('./app/models/Books');
 
 
 let generateToken = user => {

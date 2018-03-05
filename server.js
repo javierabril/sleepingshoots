@@ -111,7 +111,8 @@ app.post('/register', (req, res) => {
         res.send(result);
     });*/
 
-    console.log(newUser);
+    let result = { ok: true };
+    res.send(result);
 
 });
 /*

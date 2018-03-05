@@ -1,34 +1,209 @@
-﻿let debug = require('debug');
-let express = require('express');
-let bodyParser = require('body-parser');
-let sha = require('sha256');
-let mongoose = require('mongoose');
-let jwt = require('jsonwebtoken');
-let morgan = require('morgan');
-let fs = require('fs');
+
+/**
+* MODULE DEPENDENCIES
+* -------------------------------------------------------------------------------------------------
+* include any modules you will use through out the file
+**/
+
+var express = require('express')
+    , http = require('http')
+    , nconf = require('nconf')
+    , bodyParser = require('body-parser')
+    , jwt = require('jsonwebtoken')
+    , sha = require('sha256')
+    , path = require('path');
+ /* , everyauth = require('everyauth')
+  , Recaptcha = require('recaptcha').Recaptcha;*/
+
+var db = require('dbazure.js');
+
+/**
+* CONFIGURATION
+* -------------------------------------------------------------------------------------------------
+* load configuration settings from ENV, then settings.json.  Contains keys for OAuth logins. See 
+* settings.example.json.  
+**/
+//nconf.env().file({ file: 'settings.json' });
 
 
 
-/*mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/book-service',
-    { useMongoClient: true });
+/**
+* EVERYAUTH AUTHENTICATION
+* -------------------------------------------------------------------------------------------------
+* allows users to log in and register using OAuth services
+**/
+/*
+everyauth.debug = true;
+
+// Configure local password auth
+var usersById = {},
+    nextUserId = 0,
+    usersByFacebookId = {},
+    usersByTwitId = {},
+    usersByLogin = {
+        'user@example.com': addUser({ email: 'user@example.com', password: 'azure' })
+    };
+
+everyauth.
+    everymodule.
+    findUserById(function (id, callback) {
+        callback(null, usersById[id]);
+    });
+
+*/
+/**
+* FACEBOOK AUTHENTICATION
+* -------------------------------------------------------------------------------------------------
+* uncomment this section if you want to enable facebook authentication.  To use this, you will need
+* to get a facebook application Id and Secret, and add those to settings.json.  See:
+* http://developers.facebook.com/
+**/
+
+//everyauth.
+//    facebook.
+//    appId(nconf.get('facebook:applicationId')).
+//    appSecret(nconf.get('facebook:applicationSecret')).
+//    findOrCreateUser(
+//	function (session, accessToken, accessTokenExtra, fbUserMetadata) {
+//	    return usersByFacebookId[fbUserMetadata.claimedIdentifier] ||
+//		(usersByFacebookId[fbUserMetadata.claimedIdentifier] =
+//		 addUser('facebook', fbUserMetadata));
+//	}).
+//    redirectPath('/');
+
+
+/**
+* TWITTER AUTHENTICATION
+* -------------------------------------------------------------------------------------------------
+* uncomment this section if you want to enable twitter authentication.  To use this, you will need
+* to get a twitter key and secret, and add those to settings.json.  See:
+* https://dev.twitter.com/
+**/
+
+//everyauth
+//  .twitter
+//    .consumerKey(nconf.get('twitter:consumerKey'))
+//    .consumerSecret(nconf.get('twitter:consumerSecret'))
+//    .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
+//        return usersByTwitId[twitUser.id] || (usersByTwitId[twitUser.id] = addUser('twitter', twitUser));
+//    })
+//    .redirectPath('/');
+
+
+
+/**
+* USERNAME & PASSWORD AUTHENTICATION
+* -------------------------------------------------------------------------------------------------
+* this section provides basic in-memory username and password authentication
+**/
+/*
+everyauth
+  .password
+    .loginWith('email')
+    .getLoginPath('/login')
+    .postLoginPath('/login')
+    .loginView('account/login')
+    .loginLocals(function (req, res, done) {
+        setTimeout(function () {
+            done(null, {
+                title: 'login.  '
+            });
+        }, 200);
+    })
+    .authenticate(function (login, password) {
+        var errors = [];
+        if (!login) errors.push('Missing login');
+        if (!password) errors.push('Missing password');
+        if (errors.length) return errors;
+        var user = usersByLogin[login];
+        if (!user) return ['Login failed'];
+        if (user.password !== password) return ['Login failed'];
+        return user;
+    })
+    .getRegisterPath('/register')
+    .postRegisterPath('/register')
+    .registerView('account/register')
+    .registerLocals(function (req, res, done) {
+        setTimeout(function () {
+            done(null, {
+                title: 'Register.  ',
+                recaptcha_form: (new Recaptcha(nconf.get('recaptcha:publicKey'), nconf.get('recaptcha:privateKey'))).toHTML()
+            });
+        }, 200);
+    })
+    .extractExtraRegistrationParams(function (req) {
+        return {
+            confirmPassword: req.body.confirmPassword,
+            data: {
+                remoteip: req.connection.remoteAddress,
+                challenge: req.body.recaptcha_challenge_field,
+                response: req.body.recaptcha_response_field
+            }
+        }
+    })
+    .validateRegistration(function (newUserAttrs, errors) {
+        var login = newUserAttrs.login;
+        var confirmPassword = newUserAttrs.confirmPassword;
+        if (!confirmPassword) errors.push('Missing password confirmation')
+        if (newUserAttrs.password != confirmPassword) errors.push('Passwords must match');
+        if (usersByLogin[login]) errors.push('Login already taken');
+
+        // validate the recaptcha 
+        var recaptcha = new Recaptcha(nconf.get('recaptcha:publicKey'), nconf.get('recaptcha:privateKey'), newUserAttrs.data);
+        recaptcha.verify(function (success, error_code) {
+            if (!success) {
+                errors.push('Invalid recaptcha - please try again');
+            }
+        });
+        return errors;
+    })
+    .registerUser(function (newUserAttrs) {
+        var login = newUserAttrs[this.loginKey()];
+        return usersByLogin[login] = addUser(newUserAttrs);
+    })
+    .loginSuccessRedirect('/')
+    .registerSuccessRedirect('/');
+
+// add a user to the in memory store of users.  If you were looking to use a persistent store, this
+// would be the place to start
+function addUser(source, sourceUser) {
+    var user;
+    if (arguments.length === 1) {
+        user = sourceUser = source;
+        user.id = ++nextUserId;
+        return usersById[nextUserId] = user;
+    } else { // non-password-based
+        user = usersById[++nextUserId] = { id: nextUserId };
+        user[source] = sourceUser;
+    }
+    return user;
+}
 
 */
 
-const secretWord = "miclave";
 
-let app = express();
+var app = express();
+app.configure(function () {
+    app.set('port', process.env.PORT || 3000);
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'jade');
+    app.use(express.favicon());
+    app.use(express.logger('dev'));
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
+    app.use(express.cookieParser('azure zomg'));
+    app.use(express.session());
+    app.use(everyauth.middleware(app));
+    app.use(app.router);
+    app.use(require('less-middleware')({ src: __dirname + '/public' }));
+    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(bodyParser.json());
 
-app.set('port', process.env.PORT || 3000);
-app.use(bodyParser.json());
-// use morgan to log requests to the console
-app.use(morgan('dev'));
+});
 
-
-//Assign our created models
-//let Comments = require('./app/models/Comments');
-//let Users = require('./app/models/Users');
-//let Books = require('./app/models/Books');
+app.configure('development', function () {
+    app.use(express.errorHandler());
+});
 
 
 let generateToken = user => {
@@ -46,46 +221,6 @@ let validateToken = token => {
         console.log("Error validating token");
     }
 };
-
-app.post('/login', (req, res) => {
-    // Get user credentials from the request
-    let userClient = {
-        name: req.body.name,
-        //Encripted password sha
-        password: sha(req.body.password)
-    };
-
-
-    // Look for user in the User collection
-    Users.find({
-        name: userClient.name,
-        password: userClient.password
-    })
-        .then(data => {
-            // User is valid. Generate token
-            if (data) {
-                //Only have an user and pass to generate token
-                let token = generateToken(data[0]);
-                let result = { ok: true, token: token };
-                res.send(result);
-                // User not found. Generate error message
-            } else {
-                let result = {
-                    ok: false,
-                    error: "Username or password incorrect"
-                };
-                res.send(result);
-            }
-        }).catch(error => {
-            // Error searching user. Generate error message
-            let result = {
-                ok: false,
-                error: "Username or password incorrect"
-            };
-            res.send(result);
-        });
-});
-
 
 app.post('/register', (req, res) => {
     // Get user credentials from the request
@@ -115,320 +250,63 @@ app.post('/register', (req, res) => {
     res.send(result);
 
 });
-/*
-app.get('/books', function (req, res) {
-    let token = req.headers['authorization'];
-    let result = validateToken(token);
-    
-    if (result) {
-        Books.find({}).then(booksData => {
-            if (booksData.length > 0) {
-                let result = {
-                    ok: true,
-                    books: booksData
-                };
-                res.send(result);
-            }
-            else {
-                let result = {
-                    ok: true,
-                    books: "No books found"
-                };
-                res.send(result);
-            }
 
+/**
+* ROUTING
+* -------------------------------------------------------------------------------------------------
+* include a route file for each major area of functionality in the site
+**/
+//require('./routes/home')(app);
+//require('./routes/account')(app);
+
+
+var server = http.createServer(app);
+
+/**
+* CHAT / SOCKET.IO 
+* -------------------------------------------------------------------------------------------------
+* this shows a basic example of using socket.io to orchestrate chat
+**/
+
+// socket.io configuration
+var buffer = [];
+var io = require('socket.io').listen(server);
+
+
+io.configure(function () {
+    io.set("transports", ["xhr-polling"]);
+    io.set("polling duration", 100);
+});
+
+io.sockets.on('connection', function (socket) {
+    socket.emit('messages', { buffer: buffer });
+    socket.on('setname', function (name) {
+        socket.set('name', name, function () {
+            socket.broadcast.emit('announcement', { announcement: name + ' connected' });
         });
-    }
-    else {
-        res.sendStatus(401);
-    }
+    });
+    socket.on('message', function (message) {
+        socket.get('name', function (err, name) {
+            var msg = { message: [name, message] };
+            buffer.push(msg);
+            if (buffer.length > 15) buffer.shift();
+            socket.broadcast.emit('message', msg);
+        })
+    });
+    socket.on('disconnect', function () {
+        socket.get('name', function (err, name) {
+            socket.broadcast.emit('announcement', { announcement: name + ' disconnected' });
+        })
+    })
+});
 
-});   
 
-app.post('/books', function (req, res) {
-    let token = req.headers['authorization'];
-    console.log(token);
-    let result = validateToken(token);
-    if (result) {
-        let book = {
-            author: req.body.author,
-            title: req.body.title,
-            price: req.body.price,
-            published: req.body.published,
-            image: req.body.image,
-            creator: result.id //we get the userid from decrypted token
-        };
+/**
+* RUN
+* -------------------------------------------------------------------------------------------------
+* this starts up the server on the given port
+**/
 
-        let nameImage = Date.now();
-        let urlImg = "img/" + nameImage + ".jpg";
-
-        //Saving img in base 64 to file
-        fs.writeFile(urlImg, book.image, 'base64', function (err) {
-            if (err) {
-                return console.log(err);
-            }
-
-            console.log("The file was saved!");
-        }); 
-
-        let newBook = new Books({
-            author: book.author,
-            title: book.title,
-            price: book.price,
-            published: book.published,
-            image: urlImg,
-            creator: book.creator
-        });
-
-        newBook.save().then(data => {
-            let result = {
-                ok: true,
-                book: data
-            };
-            res.send(result);
-        }).catch(error => {
-            let result = {
-                ok: false,
-                error: "Error adding a new book"
-            };
-            res.send(result);
-        });
-    }
-    else {
-        res.sendStatus(401);
-    }
-
-});   
-
-app.put('/books/:id', (req, res) => {
-    let token = req.headers['authorization'];
-    let result = validateToken(token);
-    if (result) {
-
-        Books.findById(req.params.id).then(book => {
-            if (book) {
-                //compare id from token with creator from book
-                if (result.id == book.creator) {
-                    // Edit information and overwrite the image file if it’s present
-                    book.author = req.body.author;
-                    book.title = req.body.title;
-                    book.price = req.body.price;
-                    book.published = req.body.published;
-                    //Save image from post on same file
-                    fs.writeFile(book.image, req.body.image, 'base64', function (err) {
-                        if (err) {
-                            return console.log(err);
-                        }
-
-                        console.log("The file was overwritten!");
-                    });
-
-                    book.save().then(book => {
-                        console.log("Book updated");
-                        let result = {
-                            ok: true,
-                            book: book
-                        };
-                        res.send(result);
-                    }).catch(error => {
-                        let result = {
-                            ok: false,
-                            error: "Error updating book"
-                        };
-                        res.send(result);
-                    });
-
-                }
-                else //creator is different
-                {
-                    res.sendStatus(403);
-                }
-            }
-            else
-            {
-                let result = {
-                    ok: false,
-                    error: "Error. Book id not found on DB"
-                };
-                res.send(result);
-            }
-        }).catch(error => {
-            let result = {
-                ok: false,
-                error: "Error finding book. Check book id"
-            };
-            res.send(result);
-        });
-
-    }
-    else { //token is invalid
-        res.sendStatus(401);
-    }
-
-});   
-
-app.delete('/books/:id', (req, res) => {
-
-    let token = req.headers['authorization'];
-    let result = validateToken(token);
-    if (result) {
-
-        Books.findById(req.params.id).then(book => {
-            if (book) {
-                if (result.id == book.creator) {
-
-                    Comments.remove({ book: req.params.id }).then(() => {
-                        // Remove the book here
-                        Books.remove({ _id: req.params.id }).then(() => {
-                            let result = {
-                                ok: true
-                            };
-                            res.send(result);
-                        }).catch(error => {
-                            let result = {
-                                ok: false,
-                                error: "Error deleting book " + req.params.id
-                            };
-                            res.send(result);
-                        });
-
-                        //remove image from fs
-                        fs.unlink(book.image, function (err) {
-                            if (err) {
-                                return console.log(err);
-                            }
-
-                            console.log("The file was deleted!");
-                        });
-
-                    }).catch(error => {
-                        let result = {
-                            ok: false,
-                            error: "Error deleting comments from book " + req.params.id
-                        };
-                        res.send(result);
-                    });
-                }
-                else //creator is different
-                {
-                    res.sendStatus(403);
-                }
-            }
-            else
-            {
-                let result = {
-                    ok: false,
-                    error: "Error. Book id not found on DB"
-                };
-                res.send(result);
-            }
-
-            }).catch(error => {
-                let result = {
-                    ok: false,
-                    error: "Error finding book, check book id"
-                };
-                res.send(result);
-            });
-
-    }
-    else { //token is invalid
-        res.sendStatus(401);
-    }
-}); 
-
-app.get('/comments/:bookId', (req, res) => {
-
-    let token = req.headers['authorization'];
-    let result = validateToken(token);
-    if (result) {
-
-        Comments.find({
-            book: req.params.bookId
-        }).populate('user').then(data => {
-            //If finds any comment
-            if (data.length > 0) {
-                let result = { ok: true, comments: data };
-                res.send(result);
-            }
-            else
-            {
-                let result = {
-                    ok: false,
-                    error: "Error getting comments for book: " + req.params.bookId
-                };
-                res.send(result);
-            }
-
-        }).catch(error => {
-                let result = {
-                    ok: false,
-                    error: "Error getting comments for book: " + req.params.bookId
-                };
-                res.send(result);
-        });
-
-    }
-    else { //token is invalid
-        res.sendStatus(401);
-    }
-
-}); 
-
-app.post('/comments/:bookId', (req, res) => {
-
-    let token = req.headers['authorization'];
-    let result = validateToken(token);
-    if (result) {
-        
-        Books.findById(req.params.bookId).then(bookfound => {
-
-            if (bookfound) {
-
-                let newComment = new Comments({
-                    score: req.body.score,
-                    book: req.params.bookId,
-                    user: result.id,
-                    text: req.body.text
-                });
-
-                newComment.save().then(comment => {
-                    let result = {
-                        ok: true,
-                        comment: comment
-                    };
-                    res.send(result);
-                }).catch(error => {
-                    let result = {
-                        ok: false,
-                        error: "Error adding a comment for book: " + req.params.bookId
-                    };
-                    res.send(result);
-                });
-            }
-            else
-            {
-                let result = {
-                    ok: false,
-                    error: "Error adding comment. Book id " + req.params.bookId + " not found on DB"
-                };
-                res.send(result);
-            }
-        }).catch(error => {
-            let result = {
-                ok: false,
-                error: "Error adding a comment for book: " + req.params.bookId
-            };
-            res.send(result);
-        });
-    }
-    else { //token is invalid
-        res.sendStatus(401);
-    }
-
-}); 
-*/
-
-app.listen(app.get('port'), function () {
+server.listen(app.get('port'), function () {
     console.log("Express server listening on port " + app.get('port'));
 });

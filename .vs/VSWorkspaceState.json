@@ -2,8 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\app",
-    "\\app\\models",
-    "\\obj\\Debug"
+    "\\app\\models"
   ],
   "SelectedNode": "\\server.js",
   "PreviewInSolutionExplorer": false

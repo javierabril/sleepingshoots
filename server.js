@@ -225,35 +225,6 @@ function validateToken (token) {
 
 };
 
-app.post('/register', (req, res) {
-    // Get user credentials from the request
-    var user = {
-        name: req.body.name,
-        //Encripted password sha
-        password: sha(req.body.password)
-    };
-    /*let newUser = new Users({
-        name: user.name,
-        password: user.password
-    });
-    */
-    /*
-    newUser.save().then(data => {
-        let result = { ok: true};
-        res.send(result);
-    }).catch(error => {
-        let result = {
-            ok: false,
-            error: "User couldn't be registered"
-        };
-        res.send(result);
-    });*/
-
-    var result = { ok: true };
-    res.send(user);
-
-});
-
 /**
 * ROUTING
 * -------------------------------------------------------------------------------------------------
@@ -262,6 +233,7 @@ app.post('/register', (req, res) {
 //require('./routes/home')(app);
 //require('./routes/account')(app);
 
+require('./routes/services')(app);
 
 var server = http.createServer(app);
 

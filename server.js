@@ -230,11 +230,11 @@ app.post('/register', (req, res) => {
         //Encripted password sha
         password: sha(req.body.password)
     };
-    let newUser = new Users({
+    /*let newUser = new Users({
         name: user.name,
         password: user.password
     });
-
+    */
     /*
     newUser.save().then(data => {
         let result = { ok: true};
@@ -248,7 +248,7 @@ app.post('/register', (req, res) => {
     });*/
 
     let result = { ok: true };
-    res.send(result);
+    res.send(user);
 
 });
 

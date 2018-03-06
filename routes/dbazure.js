@@ -53,7 +53,7 @@ module.exports = {
 
         request.on('requestCompleted', function () {
 
-            //this.Desconectar(conexion);
+            conexion.close();
 
         });
 
@@ -76,6 +76,8 @@ module.exports = {
                 }
             });
 
+            console.log(user);
+
             request.addParameter('nombre', TYPES.VarChar, user.nombre);
             request.addParameter('email', TYPES.VarChar, user.email);
             request.addParameter('password', TYPES.Varchar, user.password);
@@ -95,7 +97,7 @@ module.exports = {
 
             request.on('requestCompleted', function () {
 
-                //this.Desconectar(conexion);
+                conexion.close();
 
             });
 

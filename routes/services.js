@@ -15,6 +15,8 @@ module.exports = function (app) {
 
         var userEncontrado = db.BuscaUser(req.body.name);
 
+        console.log(userEncontrado);
+
         var result = {
             ok: true,
             encontrado: userEncontrado

@@ -30,7 +30,7 @@ module.exports = {
 
     BuscaUser: function (userName) {
 
-        var connection = Conectar();
+        var connection = this.Conectar();
 
         var Request = require('tedious').Request;
         var TYPES = require('tedious').TYPES;
@@ -62,7 +62,7 @@ module.exports = {
 
         connection.execSql(request);
 
-        Desconectar(connection);
+        this.Desconectar(connection);
 
         return numFilas;
     }

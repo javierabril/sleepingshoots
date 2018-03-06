@@ -65,13 +65,14 @@ module.exports = {
             self.EjecutaSelect(conexion, "SELECT * FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
                 if (error) {
                     console.log(error);
+                    cbFunc(error);
                 }
                 else {
 
                     if (resultado.length > 0)
-                        return cbFunc(true);
+                        return cbFunc(null,true);
                     else
-                        return cbFunc(false);
+                        return cbFunc(null,false);
                 }
             });
 

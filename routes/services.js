@@ -13,16 +13,17 @@ module.exports = function (app) {
             password: sha(req.body.password)
         };
 
-        var userEncontrado = db.BuscaUser(req.body.name);
+        db.BuscaUser(req.body.name, function(error, encontrado) {
 
-        console.log(userEncontrado);
+            var result = {
+                ok: true,
+                existeUser: encontrado
+            };
 
-        var result = {
-            ok: true,
-            encontrado: userEncontrado
-        };
+            res.send(result);
 
-        res.send(result);
+        });
+       
 
     });
 

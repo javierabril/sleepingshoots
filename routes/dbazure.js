@@ -61,20 +61,17 @@ module.exports = {
         //Usamos siempre el callback
         var connection = this.Conectar(function (error, conexion) {
 
-            console.log("aqui voy");
-
             //Cuando responda la conexion ejecutamos el select
             self.EjecutaSelect(conexion, "SELECT * FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
                 if (error) {
                     console.log(error);
                 }
                 else {
-                    console.log(resultado);
-                    //cbFunc(resultado);
+
                     if (resultado.length > 0)
-                        return true;
+                        return cbFunc(true);
                     else
-                        return false;
+                        return cbFunc(false);
                 }
             });
 

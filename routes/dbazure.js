@@ -53,7 +53,7 @@ module.exports = {
 
         request.on('requestCompleted', function () {
 
-            this.Desconectar(conexion);
+            //this.Desconectar(conexion);
 
         });
 
@@ -95,7 +95,7 @@ module.exports = {
 
             request.on('requestCompleted', function () {
 
-                this.Desconectar(conexion);
+                //this.Desconectar(conexion);
 
             });
 

@@ -69,10 +69,6 @@ module.exports = function DBAzure() {
 
 
 
-    //Funciones publica
-
-    return {
-
         InsertaUser: function (user, cbFunc) {
 
             var Request = require('tedious').Request
@@ -133,7 +129,5 @@ module.exports = function DBAzure() {
             });
 
         }
-
-    };
 
 };

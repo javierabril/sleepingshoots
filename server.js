@@ -213,7 +213,7 @@ function generateToken(user) {
     var token = jwt.sign({ id: user._id, name: user.name }, secretWord,
         { expiresIn: "2 years" });
     return token;
-};
+}
 
 function validateToken(token) {
 
@@ -224,7 +224,8 @@ function validateToken(token) {
         console.log("Error validating token");
     }
 
-};
+}
+
 
 /**
 * ROUTING

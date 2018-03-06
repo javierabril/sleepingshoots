@@ -3,7 +3,7 @@ module.exports = function (app) {
 
     app.post('/register', function (req, res) {
 
-        //var db = require('./dbazure');
+        var db = require('./dbazure');
         var sha = require('sha256');
 
         // Get user credentials from the request
@@ -13,7 +13,7 @@ module.exports = function (app) {
             password: sha(req.body.password)
         };
 
-        //var userEncontrado = db.BuscaUser(req.body.name);
+        var userEncontrado = db.BuscaUser(req.body.name);
 
         var result = {
             ok: true,

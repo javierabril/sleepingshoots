@@ -138,7 +138,7 @@ module.exports = {
         var connection = this.Conectar(function (error, conexion) {
 
             //Cuando responda la conexion ejecutamos el select
-            self.EjecutaSelect(conexion, "SELECT nombre,password FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
+            self.EjecutaSelect(conexion, "SELECT id,nombre,password FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
                 if (error) {
                     console.log(error);
                     cbFunc(error);
@@ -146,15 +146,16 @@ module.exports = {
                 else {
                     if (resultado.length > 0)
                         //Si coincide el nombre y pass sha devolvemos true
-                        if (resultado[0] == user.nombre && resultado[1] == sha(user.password)) {
-                            return cbFunc(null, true);
+                        if (resultado[1] == user.nombre && resultado[2] == sha(user.password)) {
+                            //Si es ok devolvemos el id
+                            return cbFunc(null, resultado[1]);
                         }
-                        //sino coincide devolvemos false
+                        //sino coincide devolvemos -1
                         else {
-                            return cbFunc(null,  false);
+                            return cbFunc(null,  -1);
                         }                        
                     else //sino devuelve nada el select es que no existe el user
-                        return cbFunc(null, false);
+                        return cbFunc(null, -1);
                 }
             });
 

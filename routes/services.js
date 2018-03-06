@@ -93,39 +93,46 @@ module.exports = function (app) {
     app.post('/login', (req, res) => {
         // Get user credentials from the request
         let userClient = {
-            name: req.body.name,
+            nombre: req.body.name,
             //Encripted password sha
             password: sha(req.body.password)
         };
 
 
-        Users.find({
-            name: userClient.name,
-            password: userClient.password
-        })
-            .then(data => {
-                // User is valid. Generate token
-                if (data) {
-                    //Only have an user and pass to generate token
-                    let token = generateToken(data[0]);
-                    let result = { ok: true, token: token };
-                    res.send(result);
-                    // User not found. Generate error message
-                } else {
-                    let result = {
-                        ok: false,
-                        error: "Username or password incorrect"
+        db.Login(userClient, function (error, loginId) {
+
+            var result;
+
+            if (error) {
+                result = {
+                    ok: false,
+                    idUsuario: loginId
+                };
+
+                res.send(result);
+            }
+            else {
+                //Si es correcto devolvemos true y el id
+                if (loginId > 0) {
+                    result = {
+                        ok: true,
+                        idUsuario: loginId
                     };
+
                     res.send(result);
                 }
-            }).catch(error => {
-                // Error searching user. Generate error message
-                let result = {
-                    ok: false,
-                    error: "Username or password incorrect"
-                };
-                res.send(result);
-            });
+                //Sino devolvemos false y -1
+                else {
+                    result = {
+                        ok: false,
+                        idUsuario: loginId
+                    };
+
+                    res.send(result);
+                }
+            }
+
+        }
     });
 
 };

@@ -1,4 +1,4 @@
-module.exports = function DBAzure {    
+module.exports = function DBAzure() {    
 
 
     var conexion;
@@ -37,7 +37,7 @@ module.exports = function DBAzure {
 
     }
 
-    function EjecutaSelect (textoSelect, cbFunc) {
+    function EjecutaSelect(textoSelect, cbFunc) {
 
         var Request = require('tedious').Request;
         var TYPES = require('tedious').TYPES;
@@ -101,7 +101,7 @@ module.exports = function DBAzure {
                 cbFunc(null, resultado);
             });
 
-            connection.execSql(request);  
+            connection.execSql(request);
 
         },
 
@@ -122,9 +122,9 @@ module.exports = function DBAzure {
 
                         if (resultado.length > 0)
                             //Si existe devolvemos el id
-                            return cbFunc(null,resultado[0]);
+                            return cbFunc(null, resultado[0]);
                         else
-                            return cbFunc(null,-1);
+                            return cbFunc(null, -1);
                     }
                 });
 
@@ -134,4 +134,4 @@ module.exports = function DBAzure {
 
     };
 
-}
+};

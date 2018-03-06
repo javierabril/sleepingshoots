@@ -62,7 +62,7 @@ module.exports = {
             console.log("aqui voy");
 
             //Cuando responda la conexion ejecutamos el select
-            this.EjecutaSelect(conexion, "SELECT * FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
+            EjecutaSelect(conexion, "SELECT * FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
                 if (error) {
                     console.log(error);
                 }

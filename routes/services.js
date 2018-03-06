@@ -30,8 +30,8 @@ module.exports = function (app) {
             //Encripted password sha
             password: sha(req.body.password)
         };
-        
-        db.BuscaUser(req.body.name, function(error, encontrado) {
+
+        db.BuscaUser(req.body.name, function (error, encontrado) {
             var result;
 
             if (error) {
@@ -85,7 +85,7 @@ module.exports = function (app) {
                 }
             }
         });
-       
+
 
     });
 
@@ -132,7 +132,7 @@ module.exports = function (app) {
                 }
             }
 
-        }
+        });
     });
 
 };

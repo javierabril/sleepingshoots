@@ -2,7 +2,7 @@ module.exports = {
 
     Conectar: function() {
 
-        var Connection = require('tedious').Connection,
+        var Connection = require('tedious').Connection;
         var config = {
             userName: 'portalsanviweb',
             password: 'SYadmin-11',
@@ -10,6 +10,7 @@ module.exports = {
             // If you are on Microsoft Azure, you need this:  
             options: { encrypt: true, database: 'ssdb' }
         };
+
         var connection = new Connection(config);
 
         connection.on('connect', function (err) {
@@ -17,9 +18,11 @@ module.exports = {
             console.log("Conectado a BD");
 
         });
+
+        return connection;
     },
 
-    Desconectar: function() {
+    Desconectar: function(connection) {
 
         connection.close();
 
@@ -27,7 +30,7 @@ module.exports = {
 
     BuscaUser: function (userName) {
 
-        Conectar();
+        var connection = Conectar();
 
         var Request = require('tedious').Request;
         var TYPES = require('tedious').TYPES;
@@ -57,9 +60,9 @@ module.exports = {
             numFilas = rowCount;
         });
 
-        db.connection.execSql(request);
+        connection.execSql(request);
 
-        Desconectar();
+        Desconectar(connection);
 
         return numFilas;
     }

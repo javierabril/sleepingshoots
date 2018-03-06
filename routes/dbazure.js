@@ -40,7 +40,7 @@ module.exports = {
         var request = new Request(textoSelect, function (error) {
 
             if (error) {
-                console.log(err);
+                console.log(error);
                 return cbFunc(error);
             }
             cbFunc(null, resultado);

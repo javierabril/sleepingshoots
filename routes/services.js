@@ -30,15 +30,6 @@ module.exports = function (app) {
             }
             else {
 
-                /*result = {
-                    ok: true,
-                    existeUser: encontrado
-                };
-
-                res.send(result);*/
-
-                console.log(encontrado);
-
                 //Si no existe lo insertamos
                 if (encontrado == -1) {
 

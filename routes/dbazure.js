@@ -56,13 +56,15 @@ module.exports = {
 
     BuscaUser: function (userName, cbFunc) {
 
+        var self = this;
+
         //Usamos siempre el callback
         var connection = this.Conectar(function (error, conexion) {
 
             console.log("aqui voy");
 
             //Cuando responda la conexion ejecutamos el select
-            EjecutaSelect(conexion, "SELECT * FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
+            self.EjecutaSelect(conexion, "SELECT * FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
                 if (error) {
                     console.log(error);
                 }

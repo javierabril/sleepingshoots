@@ -70,7 +70,7 @@ module.exports = {
         this.Conectar(function (error, conexion) {
 
             //var request = new Request("INSERT Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES (@nombre, @email, @password, CURRENT_TIMESTAMP);", function (err) {
-            var request = new Request("INSERT Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES ('javi', 'javi@ono', '123', CURRENT_TIMESTAMP);", function (err) {
+            var request = new Request("INSERT into Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES ('javi', 'javi@ono', '123', CURRENT_TIMESTAMP);", function (err) {
                 if (err) {
                     console.log(err);
                     cbFunc(error);

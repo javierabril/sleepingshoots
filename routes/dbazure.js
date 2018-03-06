@@ -14,12 +14,15 @@ module.exports = {
         var connection = new Connection(config);
 
         connection.on('connect', function (err) {
-            // If no error, then good to proceed.  
-            console.log("Conectado a BD");
-
+            if (err) {
+                console.log(err);
+            } else {
+                // If no error, then good to proceed.
+                console.log("Conectado a BD");
+                return connection;
+            }
         });
 
-        return connection;
     },
 
     Desconectar: function(connection) {
@@ -31,6 +34,8 @@ module.exports = {
     BuscaUser: function (userName) {
 
         var connection = this.Conectar();
+
+        console.log(connection);
 
         var Request = require('tedious').Request;
         var TYPES = require('tedious').TYPES;

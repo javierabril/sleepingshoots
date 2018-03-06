@@ -1,6 +1,11 @@
-module.exports = {    
+module.exports = function DBAzure {    
 
-    Conectar: function(callback) {
+
+    var conexion;
+
+    ///Funciones privadas
+
+    function Conectar(callback) {
 
         var Connection = require('tedious').Connection;
         var config = {
@@ -19,19 +24,20 @@ module.exports = {
             } else {
                 console.log("Conectado a BD");
                 //Si no hay error devolvemos la conexion al callback
+                this.conexion = connection;
                 return callback("null", connection);
             }
         });
 
-    },
+    }
 
-    Desconectar: function(connection) {
+    function Desconectar() {
 
-        connection.close();
+        conexion.close();
 
-    },
+    }
 
-    EjecutaSelect: function (conexion, textoSelect, cbFunc) {
+    function EjecutaSelect (textoSelect, cbFunc) {
 
         var Request = require('tedious').Request;
         var TYPES = require('tedious').TYPES;
@@ -50,98 +56,82 @@ module.exports = {
             // populate the results array
             resultado.push(rowObject);
         });
-        conexion.execSql(request);
 
-    },
+        request.on('requestCompleted', function () {
 
-    InsertaUser: function (conexion, user, cbFunc) {
-
-        var Request = require('tedious').Request
-        var TYPES = require('tedious').TYPES;
-        var resultado;
-
-        var request = new Request("INSERT Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES (@nombre, @email, @password, CURRENT_TIMESTAMP);", function (err) {
-            if (err) {
-                console.log(err);
-                cbFunc(error);
-            }
-        });
-
-        request.addParameter('nombre', TYPES.VarChar, user.nombre);
-        request.addParameter('email', TYPES.VarChar, user.email);
-        request.addParameter('password', TYPES.Varchar, user.password);
-
-        request.on('row', function (columns) {
-            columns.forEach(function (column) {
-                if (column.value === null) {
-                    console.log('NULL');
-                } else {
-                    console.log("El id del user insertado es: " + column.value);
-                    resultado = column.value;
-                }
-            });
-            //Devolvemos id del user en el callback
-            cbFunc(null, resultado);
-        });
-
-        connection.execSql(request);  
-
-    },
-
-    BuscaUser: function (userName, cbFunc) {
-
-        var self = this;
-
-        //Usamos siempre el callback
-        var connection = this.Conectar(function (error, conexion) {
-
-            //Cuando responda la conexion ejecutamos el select
-            self.EjecutaSelect(conexion, "SELECT * FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
-                if (error) {
-                    console.log(error);
-                    cbFunc(error);
-                }
-                else {
-
-                    if (resultado.length > 0)
-                        //Si existe devolvemos el id
-                        return cbFunc(null,resultado[0]);
-                    else
-                        return cbFunc(null,-1);
-                }
-            });
+            this.Desconectar();
 
         });
+
+        this.conexion.execSql(request);
 
     }
 
-        
-    /*
-        
-        var result = "";
-        request.on('row', function (columns) {
-            columns.forEach(function (column) {
-                if (column.value === null) {
-                    console.log('NULL');
-                } else {
-                    result += column.value + " ";
+    //Funciones publica
+
+    return {
+
+        InsertaUser: function (user, cbFunc) {
+
+            var Request = require('tedious').Request
+            var TYPES = require('tedious').TYPES;
+            var resultado;
+
+            var request = new Request("INSERT Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES (@nombre, @email, @password, CURRENT_TIMESTAMP);", function (err) {
+                if (err) {
+                    console.log(err);
+                    cbFunc(error);
                 }
             });
-            console.log(result);
-            result = "";
-        });
 
-        var numFilas;
+            request.addParameter('nombre', TYPES.VarChar, user.nombre);
+            request.addParameter('email', TYPES.VarChar, user.email);
+            request.addParameter('password', TYPES.Varchar, user.password);
 
-        request.on('doneInProc', function (rowCount, more, rows) {
-            console.log(rowCount + ' rows returned');
-            numFilas = rowCount;
-        });
+            request.on('row', function (columns) {
+                columns.forEach(function (column) {
+                    if (column.value === null) {
+                        console.log('NULL');
+                    } else {
+                        console.log("El id del user insertado es: " + column.value);
+                        resultado = column.value;
+                    }
+                });
+                //Devolvemos id del user en el callback
+                cbFunc(null, resultado);
+            });
 
-        connection.execSql(request);
+            connection.execSql(request);  
 
-        this.Desconectar(connection);
+        },
 
-        return numFilas;
-    }*/
+        BuscaUser: function (userName, cbFunc) {
+
+            var self = this;
+
+            //Usamos siempre el callback
+            this.Conectar(function (error, conexion) {
+
+                //Cuando responda la conexion ejecutamos el select
+                self.EjecutaSelect(conexion, "SELECT * FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
+                    if (error) {
+                        console.log(error);
+                        cbFunc(error);
+                    }
+                    else {
+
+                        if (resultado.length > 0)
+                            //Si existe devolvemos el id
+                            return cbFunc(null,resultado[0]);
+                        else
+                            return cbFunc(null,-1);
+                    }
+                });
+
+            });
+
+        }
+
+    };
+
 }

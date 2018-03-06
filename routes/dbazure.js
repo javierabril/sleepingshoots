@@ -71,6 +71,10 @@ module.exports = {
                 else {
                     console.log(resultado);
                     //cbFunc(resultado);
+                    if (resultado.length > 0)
+                        return true;
+                    else
+                        return false;
                 }
             });
 

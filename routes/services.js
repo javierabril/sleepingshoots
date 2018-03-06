@@ -17,7 +17,7 @@ module.exports = function (app) {
 
         var result = {
             ok: true,
-            numFilas: userEncontrado
+            encontrado: userEncontrado
         };
 
         res.send(result);

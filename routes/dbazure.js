@@ -52,8 +52,6 @@ module.exports = {
         });
         conexion.execSql(request);
 
-        this.Desconectar(conexion);
-
     },
 
     InsertaUser: function (conexion, user, cbFunc) {

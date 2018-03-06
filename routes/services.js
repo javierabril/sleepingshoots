@@ -15,9 +15,12 @@ module.exports = function (app) {
 
         db.BuscaUser(req.body.name, function(error, encontrado) {
 
+            var result;
+
             if (error) {
                 console.log(error);
-                var result = {
+
+                result = {
                     ok: false,
                     error: error
                 };
@@ -26,14 +29,28 @@ module.exports = function (app) {
 
             }
             else {
-                console.log(encontrado);
 
-                var result = {
+                /*result = {
                     ok: true,
                     existeUser: encontrado
                 };
 
-                res.send(result);
+                res.send(result);*/
+
+                console.log(encontrado);
+
+                //Si no existe lo insertamos
+                if (encontrado.equals(-1)) {
+
+                }
+                else {
+                    result = {
+                        ok: false,
+                        error: "El usuario ya existe"
+                    };
+
+                    res.send(result);
+                }
             }
         });
        

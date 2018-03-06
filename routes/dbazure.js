@@ -17,8 +17,8 @@ module.exports = {
             if (err) {
                 return callback(error);
             } else {
-                //If no error, then good to proceed.
                 console.log("Conectado a BD");
+                //Si no hay error devolvemos la conexion al callback
                 return callback("null", connection);
             }
         });
@@ -31,7 +31,7 @@ module.exports = {
 
     },
 
-    EjecutaSelect: function (conexion, textoSelect, callback) {
+    EjecutaSelect: function (conexion, textoSelect, cbFunc) {
 
         var Request = require('tedious').Request;
         var TYPES = require('tedious').TYPES;
@@ -41,9 +41,9 @@ module.exports = {
 
             if (error) {
                 console.log(err);
-                return callback(error);
+                return cbFunc(error);
             }
-            callback(null, resultado);
+            cbFunc(null, resultado);
         });
 
         request.on("row", function (rowObject) {
@@ -51,6 +51,42 @@ module.exports = {
             resultado.push(rowObject);
         });
         conexion.execSql(request);
+
+        this.Desconectar(conexion);
+
+    },
+
+    InsertaUser: function (conexion, user, cbFunc) {
+
+        var Request = require('tedious').Request
+        var TYPES = require('tedious').TYPES;
+        var resultado;
+
+        var request = new Request("INSERT Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES (@nombre, @email, @password, CURRENT_TIMESTAMP);", function (err) {
+            if (err) {
+                console.log(err);
+                cbFunc(error);
+            }
+        });
+
+        request.addParameter('nombre', TYPES.VarChar, user.nombre);
+        request.addParameter('email', TYPES.VarChar, user.email);
+        request.addParameter('password', TYPES.Varchar, user.password);
+
+        request.on('row', function (columns) {
+            columns.forEach(function (column) {
+                if (column.value === null) {
+                    console.log('NULL');
+                } else {
+                    console.log("El id del user insertado es: " + column.value);
+                    resultado = column.value;
+                }
+            });
+            //Devolvemos id del user en el callback
+            cbFunc(null, resultado);
+        });
+
+        connection.execSql(request);  
 
     },
 
@@ -70,9 +106,10 @@ module.exports = {
                 else {
 
                     if (resultado.length > 0)
-                        return cbFunc(null,true);
+                        //Si existe devolvemos el id
+                        return cbFunc(null,resultado[0]);
                     else
-                        return cbFunc(null,false);
+                        return cbFunc(null,-1);
                 }
             });
 

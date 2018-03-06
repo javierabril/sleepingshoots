@@ -14,8 +14,8 @@ module.exports = function (app) {
             password: sha(req.body.password)
         };
         
-        db.BuscaUser(req.body.name, function(error, encontrado) {
-
+//        db.BuscaUser(req.body.name, function(error, encontrado) {
+        require('./dbazure').BuscaUser(req.body.name, function (error, encontrado) {
             var result;
 
             if (error) {

@@ -208,24 +208,6 @@ app.configure('development', function () {
 });
 
 
-function generateToken(user) {
-
-    var token = jwt.sign({ id: user._id, name: user.name }, secretWord,
-        { expiresIn: "2 years" });
-    return token;
-}
-
-function validateToken(token) {
-
-    try {
-        var result = jwt.verify(token, secretWord);
-        return result;
-    } catch (e) {
-        console.log("Error validating token");
-    }
-
-}
-
 
 /**
 * ROUTING

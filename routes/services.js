@@ -1,5 +1,22 @@
 module.exports = function (app) {
 
+    function generateToken(user) {
+
+        var token = jwt.sign({ id: user._id, name: user.name }, secretWord,
+            { expiresIn: "2 years" });
+        return token;
+    }
+
+    function validateToken(token) {
+
+        try {
+            var result = jwt.verify(token, secretWord);
+            return result;
+        } catch (e) {
+            console.log("Error validating token");
+        }
+
+    }
 
     app.post('/register', function (req, res) {
 
@@ -70,6 +87,45 @@ module.exports = function (app) {
         });
        
 
+    });
+
+
+    app.post('/login', (req, res) => {
+        // Get user credentials from the request
+        let userClient = {
+            name: req.body.name,
+            //Encripted password sha
+            password: sha(req.body.password)
+        };
+
+
+        Users.find({
+            name: userClient.name,
+            password: userClient.password
+        })
+            .then(data => {
+                // User is valid. Generate token
+                if (data) {
+                    //Only have an user and pass to generate token
+                    let token = generateToken(data[0]);
+                    let result = { ok: true, token: token };
+                    res.send(result);
+                    // User not found. Generate error message
+                } else {
+                    let result = {
+                        ok: false,
+                        error: "Username or password incorrect"
+                    };
+                    res.send(result);
+                }
+            }).catch(error => {
+                // Error searching user. Generate error message
+                let result = {
+                    ok: false,
+                    error: "Username or password incorrect"
+                };
+                res.send(result);
+            });
     });
 
 };

@@ -127,6 +127,39 @@ module.exports = {
 
         });
 
+    },
+
+    Login: function (user, cbFunc) {
+
+        var self = this;
+        var sha = require('sha256');
+
+        //Usamos siempre el callback
+        var connection = this.Conectar(function (error, conexion) {
+
+            //Cuando responda la conexion ejecutamos el select
+            self.EjecutaSelect(conexion, "SELECT nombre,password FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
+                if (error) {
+                    console.log(error);
+                    cbFunc(error);
+                }
+                else {
+                    if (resultado.length > 0)
+                        //Si coincide el nombre y pass sha devolvemos true
+                        if (resultado[0] == user.nombre && resultado[1] == sha(user.password)) {
+                            return cbFunc(null, true);
+                        }
+                        //sino coincide devolvemos false
+                        else {
+                            return cbFunc(null,  false);
+                        }                        
+                    else //sino devuelve nada el select es que no existe el user
+                        return cbFunc(null, false);
+                }
+            });
+
+        });
+
     }
 
 }

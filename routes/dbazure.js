@@ -67,6 +67,11 @@ module.exports = function DBAzure() {
 
     }
 
+    function BuscaUser() {
+        console.log("BuscaUser");
+    }
+
+
     //Funciones publica
 
     return {

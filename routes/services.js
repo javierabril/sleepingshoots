@@ -1,6 +1,6 @@
 module.exports = function (app) {
 
-    function generateToken(user) {
+    /*function generateToken(user) {
 
         var token = jwt.sign({ id: user._id, name: user.name }, secretWord,
             { expiresIn: "2 years" });
@@ -17,7 +17,7 @@ module.exports = function (app) {
         }
 
     }
-
+    */
     app.post('/register', function (req, res) {
 
         var db = require('./dbazure');

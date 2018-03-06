@@ -1,9 +1,9 @@
 module.exports = function (app) {
 
-    var db = require('./dbazure');
 
     app.post('/register', function (req, res) {
 
+        var db = require('./dbazure');
         var sha = require('sha256');
 
         // Get user credentials from the request

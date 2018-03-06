@@ -40,7 +40,7 @@ module.exports = function (app) {
                 console.log(encontrado);
 
                 //Si no existe lo insertamos
-                if (encontrado.equals(-1)) {
+                if (encontrado == -1) {
 
                 }
                 else {

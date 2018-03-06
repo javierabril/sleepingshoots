@@ -89,8 +89,8 @@ module.exports = function (app) {
 
     })
 
-    /*
-    app.post('/login', (req, res) => {
+    
+    app.post('/login', function (req, res) {
         // Get user credentials from the request
         let userClient = {
             nombre: req.body.name,
@@ -133,6 +133,6 @@ module.exports = function (app) {
             }
 
         });
-    })*/
+    })
 
 };

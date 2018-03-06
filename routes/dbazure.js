@@ -31,25 +31,52 @@ module.exports = {
 
     },
 
-    BuscaUser: function (userName) {
-
-        var connection = this.Conectar(function (error, conexion) {
-            // here is the results array from the first query
-            console.log(conexion);
-        });
-
-
-
-        console.log(connection);
+    EjecutaSelect: function (conexion, textoSelect, callback) {
 
         var Request = require('tedious').Request;
         var TYPES = require('tedious').TYPES;
+        var resultado = [];
 
-        request = new Request("SELECT * FROM Users Where nombre like '" + userName + "';", function (err) {
-            if (err) {
+        var request = new Request(textoSelect, function (error) {
+
+            if (error) {
                 console.log(err);
+                return callback(error);
             }
+            callback(null, resultado);
         });
+
+        request.on("row", function (rowObject) {
+            // populate the results array
+            resultado.push(rowObject);
+        });
+        conexion.execSql(request);
+
+    },
+
+    BuscaUser: function (userName, cbFunc) {
+
+        //Usamos siempre el callback
+        var connection = this.Conectar(function (error, conexion) {
+
+            //Cuando responda la conexion ejecutamos el select
+            this.EjecutaSelect(conexion, "SELECT * FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
+                if (error) {
+                    console.log(error);
+                }
+                else {
+                    console.log(resultado);
+                    //cbFunc(resultado);
+                }
+            });
+
+        });
+
+    }
+
+        
+    /*
+        
         var result = "";
         request.on('row', function (columns) {
             columns.forEach(function (column) {
@@ -75,5 +102,5 @@ module.exports = {
         this.Desconectar(connection);
 
         return numFilas;
-    }
+    }*/
 }

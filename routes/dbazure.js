@@ -70,19 +70,14 @@ module.exports = {
         this.Conectar(function (error, conexion) {
 
             //var request = new Request("INSERT Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES (@nombre, @email, @password, CURRENT_TIMESTAMP);", function (err) {
-            var request = new Request("INSERT into Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES ('javi', 'javi@ono', '123', CURRENT_TIMESTAMP);", function (err) {
+            var request = new Request("INSERT into Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES ('" + user.nombre + "', '" + user.email + "','" + user.password + "', CURRENT_TIMESTAMP);", function (err) {
                 if (err) {
                     console.log(err);
                     cbFunc(error);
                 }
             });
 
-/*            console.log(user);
 
-            request.addParameter('nombre', TYPES.VarChar, user.nombre);
-            request.addParameter('email', TYPES.VarChar, user.email);
-            request.addParameter('password', TYPES.Varchar, user.password);
-*/
             request.on('row', function (columns) {
                 columns.forEach(function (column) {
                     if (column.value === null) {

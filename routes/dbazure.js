@@ -1,6 +1,6 @@
 module.exports = {    
 
-    Conectar: function() {
+    Conectar: function(callback) {
 
         var Connection = require('tedious').Connection;
         var config = {
@@ -15,11 +15,11 @@ module.exports = {
 
         connection.on('connect', function (err) {
             if (err) {
-                console.log(err);
+                return callback(error);
             } else {
-                // If no error, then good to proceed.
+                //If no error, then good to proceed.
                 console.log("Conectado a BD");
-                return connection;
+                return callback("null", connection);
             }
         });
 
@@ -33,7 +33,12 @@ module.exports = {
 
     BuscaUser: function (userName) {
 
-        var connection = this.Conectar();
+        var connection = this.Conectar(function (error, conexion) {
+            // here is the results array from the first query
+            console.log(conexion);
+        });
+
+
 
         console.log(connection);
 

@@ -69,7 +69,6 @@ module.exports = {
 
         this.Conectar(function (error, conexion) {
 
-            //var request = new Request("INSERT Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES (@nombre, @email, @password, CURRENT_TIMESTAMP);", function (err) {
             var request = new Request("INSERT into Users (nombre, email, password, fecha) OUTPUT INSERTED.id VALUES ('" + user.nombre + "', '" + user.email + "','" + user.password + "', CURRENT_TIMESTAMP);", function (err) {
                 if (err) {
                     console.log(err);
@@ -162,6 +161,53 @@ module.exports = {
 
         });
 
+    },
+
+
+    InsertaRecord: function (record, cbFunc) {
+
+        var Request = require('tedious').Request
+        var TYPES = require('tedious').TYPES;
+        var resultado;
+
+        this.Conectar(function (error, conexion) {
+
+            var request = new Request("INSERT into Records (idUser, puntos, fecha) VALUES ('" + record.userid + "', '" + record.puntos + "', CURRENT_TIMESTAMP);", function (err) {
+                if (err) {
+                    console.log(err);
+                    cbFunc(error);
+                }
+            });
+
+            /*
+            request.on('row', function (columns) {
+                columns.forEach(function (column) {
+                    if (column.value === null) {
+                        console.log('NULL');
+                    } else {
+                        console.log("El id del user insertado es: " + column.value);
+                        resultado = column.value;
+                    }
+                });
+                //Devolvemos id del user en el callback
+                cbFunc(null, resultado);
+            });
+            */
+            request.on('requestCompleted', function () {
+
+                //Devolvemos un true
+                cbFunc(null, true);
+
+                conexion.close();
+                
+            });
+
+            conexion.execSql(request);
+
+        });
+
     }
+
+
 
 }

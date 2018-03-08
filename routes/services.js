@@ -1,6 +1,8 @@
 module.exports = function (app) {
 
-    function generateToken(user) {
+    const secretWord = "miclave";
+
+    function generateToken(user) {       
 
         var token = jwt.sign({ id: user._id, name: user.name }, secretWord,
             { expiresIn: "2 years" });
@@ -89,7 +91,7 @@ module.exports = function (app) {
 
     });
 
-    
+
     app.post('/login', function (req, res) {
 
         var db = require('./dbazure');
@@ -138,5 +140,41 @@ module.exports = function (app) {
 
         });
     });
+
+    app.post('/insertaRecord', function (req, res) {
+
+        var db = require('./dbazure');
+
+        var record = {
+            userid: req.body.userid,
+            puntos: req.body.puntos
+        };
+
+
+        db.InsertaRecord(record, function (error, correcto) {
+
+            var result;
+
+            if (error) {
+                result = {
+                    ok: false,
+                    error: error
+                };
+
+                res.send(result);
+            }
+            else {
+
+                result = {
+                    ok: true
+                };
+
+                res.send(result);
+
+            }
+
+        });
+    });
+
 
 };

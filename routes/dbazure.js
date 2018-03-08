@@ -173,7 +173,7 @@ module.exports = {
         var connection = this.Conectar(function (error, conexion) {
 
             //Cuando responda la conexion ejecutamos el select
-            self.EjecutaSelect(conexion, "SELECT * FROM Users Where id like '" + userId + "';", function (error, resultado) {
+            self.EjecutaSelect(conexion, "SELECT * FROM Records Where idUser = " + userId + " ORDER BY fecha Desc;", function (error, resultado) {
                 if (error) {
                     console.log(error);
                     cbFunc(error);

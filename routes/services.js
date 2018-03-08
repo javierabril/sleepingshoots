@@ -158,7 +158,7 @@ module.exports = function (app) {
             if (error) {
                 result = {
                     ok: false,
-                    error: error
+                    error: error.message
                 };
 
                 res.send(result);

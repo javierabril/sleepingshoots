@@ -175,7 +175,7 @@ module.exports = {
             var request = new Request("INSERT into Records (idUser, puntos, fecha) VALUES ('" + record.userid + "', '" + record.puntos + "', CURRENT_TIMESTAMP);", function (err) {
                 if (err) {
                     console.log(err);
-                    cbFunc(error);
+                    cbFunc(err);
                 }
             });
 

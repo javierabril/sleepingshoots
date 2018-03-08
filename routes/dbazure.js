@@ -132,7 +132,6 @@ module.exports = {
     Login: function (user, cbFunc) {
 
         var self = this;
-        var sha = require('sha256');
 
         //Usamos siempre el callback
         var connection = this.Conectar(function (error, conexion) {
@@ -144,16 +143,18 @@ module.exports = {
                     cbFunc(error);
                 }
                 else {
-                    if (resultado.length > 0)
+                    if (resultado.length > 0) {
+
                         //Si coincide el nombre y pass sha devolvemos true
-                        if (resultado[1] == user.nombre && resultado[2] == sha(user.password)) {
+                        if (resultado[0][1].value == user.nombre && resultado[0][2].value == user.password) {
                             //Si es ok devolvemos el id
-                            return cbFunc(null, resultado[1]);
+                            return cbFunc(null, resultado[0][0].value);
                         }
                         //sino coincide devolvemos -1
                         else {
-                            return cbFunc(null,  -1);
-                        }                        
+                            return cbFunc(null, -1);
+                        }
+                    }
                     else //sino devuelve nada el select es que no existe el user
                         return cbFunc(null, -1);
                 }

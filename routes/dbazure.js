@@ -43,6 +43,7 @@ module.exports = {
                 console.log(error);
                 return cbFunc(error);
             }
+            console.log(resultado);
             cbFunc(null, resultado);
         });
 

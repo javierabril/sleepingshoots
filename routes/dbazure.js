@@ -164,6 +164,34 @@ module.exports = {
     },
 
 
+    GetRecords: function (userId, cbFunc) {
+
+        var self = this;
+
+        //Usamos siempre el callback
+        var connection = this.Conectar(function (error, conexion) {
+
+            //Cuando responda la conexion ejecutamos el select
+            self.EjecutaSelect(conexion, "SELECT * FROM Users Where id like '" + userId + "';", function (error, resultado) {
+                if (error) {
+                    console.log(error);
+                    cbFunc(error);
+                }
+                else {
+
+                    if (resultado.length > 0)
+                        //Si hay records los devolvemos
+                        return cbFunc(null, resultado);
+                    else
+                        return cbFunc(null, null);
+                }
+            });
+
+        });
+
+    },
+
+
     InsertaRecord: function (record, cbFunc) {
 
         var Request = require('tedious').Request

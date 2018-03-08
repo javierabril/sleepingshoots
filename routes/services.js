@@ -176,5 +176,36 @@ module.exports = function (app) {
         });
     });
 
+    app.post('/getRecords', function (req, res) {
+
+        var db = require('./dbazure');
+
+
+        db.InsertaRecord(req.body.userid, function (error, records) {
+
+            var result;
+
+            if (error) {
+                result = {
+                    ok: false,
+                    error: error.message
+                };
+
+                res.send(result);
+            }
+            else {
+
+                result = {
+                    ok: true,
+                    records: records
+                };
+
+                res.send(result);
+
+            }
+
+        });
+    });
+
 
 };

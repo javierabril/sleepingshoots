@@ -48,7 +48,6 @@ module.exports = {
 
         request.on("row", function (rowObject) {
             // populate the results array
-            console.log(rowObject);
             resultado.push(rowObject);
         });
 

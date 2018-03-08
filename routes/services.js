@@ -181,7 +181,7 @@ module.exports = function (app) {
         var db = require('./dbazure');
 
 
-        db.InsertaRecord(req.body.userid, function (error, records) {
+        db.GetRecords(req.body.userid, function (error, records) {
 
             var result;
 

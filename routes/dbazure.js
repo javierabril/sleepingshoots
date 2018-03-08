@@ -43,12 +43,12 @@ module.exports = {
                 console.log(error);
                 return cbFunc(error);
             }
-            console.log(resultado);
             cbFunc(null, resultado);
         });
 
         request.on("row", function (rowObject) {
             // populate the results array
+            console.log(rowObject);
             resultado.push(rowObject);
         });
 

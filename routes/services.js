@@ -87,12 +87,16 @@ module.exports = function (app) {
         });
 
 
-    })
+    });
 
     
     app.post('/login', function (req, res) {
+
+        var db = require('./dbazure');
+        var sha = require('sha256');
+
         // Get user credentials from the request
-        let userClient = {
+        var userClient = {
             nombre: req.body.name,
             //Encripted password sha
             password: sha(req.body.password)
@@ -133,6 +137,6 @@ module.exports = function (app) {
             }
 
         });
-    })
+    });
 
 };

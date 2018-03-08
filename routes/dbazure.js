@@ -196,7 +196,7 @@ module.exports = {
                         //Si hay records los devolvemos
                         return cbFunc(null, resultado);
                     else
-                        return cbFunc(null, null);
+                        return cbFunc(null, []);
                 }
             });
 

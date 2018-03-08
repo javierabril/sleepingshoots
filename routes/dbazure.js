@@ -47,15 +47,17 @@ module.exports = {
         });
 
         request.on("row", function (rowObject) {
-            
-            //resultado.push(rowObject);
-            var fila;
+
+            //Declaramos fila como un objeto json vacio
+            var fila = {};
 
             rowObject.forEach(function (column) {
                 if (column.value === null) {
                     console.log('NULL');
                 } else {
-                    fila[column.colName] = column.value;
+                    //Cogemos el nombre de la fila y el vamos
+                    //para crear un objeto fila con los nombres de campos de la db
+                    fila[column.metadata.colName] = column.value;
                 }
             });
 
@@ -129,7 +131,7 @@ module.exports = {
 
                     if (resultado.length > 0)
                         //Si existe devolvemos el id
-                        return cbFunc(null, resultado[0]);
+                        return cbFunc(null, resultado.id);
                     else
                         return cbFunc(null, -1);
                 }
@@ -156,9 +158,9 @@ module.exports = {
                     if (resultado.length > 0) {
 
                         //Si coincide el nombre y pass sha devolvemos true
-                        if (resultado[0][1].value == user.nombre && resultado[0][2].value == user.password) {
+                        if (resultado[0].nombre == user.nombre && resultado[0].password == user.password) {
                             //Si es ok devolvemos el id
-                            return cbFunc(null, resultado[0][0].value);
+                            return cbFunc(null, resultado[0].id);
                         }
                         //sino coincide devolvemos -1
                         else {

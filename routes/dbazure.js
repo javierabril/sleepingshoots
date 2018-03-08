@@ -47,8 +47,19 @@ module.exports = {
         });
 
         request.on("row", function (rowObject) {
-            // populate the results array
-            resultado.push(rowObject);
+            
+            //resultado.push(rowObject);
+            var fila;
+
+            rowObject.forEach(function (column) {
+                if (column.value === null) {
+                    console.log('NULL');
+                } else {
+                    fila[column.colName] = column.value;
+                }
+            });
+
+            resultado.push(fila);
         });
 
         request.on('requestCompleted', function () {

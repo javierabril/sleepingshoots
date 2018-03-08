@@ -138,7 +138,7 @@ module.exports = {
         var connection = this.Conectar(function (error, conexion) {
 
             //Cuando responda la conexion ejecutamos el select
-            self.EjecutaSelect(conexion, "SELECT id,nombre,password FROM Users Where nombre like '" + userName + "';", function (error, resultado) {
+            self.EjecutaSelect(conexion, "SELECT id,nombre,password FROM Users Where nombre like '" + user.nombre + "';", function (error, resultado) {
                 if (error) {
                     console.log(error);
                     cbFunc(error);

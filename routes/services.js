@@ -208,4 +208,35 @@ module.exports = function (app) {
     });
 
 
+    app.post('/getTopRecords', function (req, res) {
+
+        var db = require('./dbazure');
+
+
+        db.GetTopRecords(function (error, records) {
+
+            var result;
+
+            if (error) {
+                result = {
+                    ok: false,
+                    error: error.message
+                };
+
+                res.send(result);
+            }
+            else {
+
+                result = {
+                    ok: true,
+                    records: records
+                };
+
+                res.send(result);
+
+            }
+
+        });
+    });
+
 };

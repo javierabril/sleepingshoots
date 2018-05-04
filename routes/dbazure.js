@@ -205,6 +205,33 @@ module.exports = {
     },
 
 
+    GetTopRecords: function (cbFunc) {
+
+        var self = this;
+
+        //Usamos siempre el callback
+        var connection = this.Conectar(function (error, conexion) {
+
+            //Cuando responda la conexion ejecutamos el select
+            self.EjecutaSelect(conexion, "SELECT * FROM Records ORDER BY puntos Desc LIMIT 10;", function (error, resultado) {
+                if (error) {
+                    console.log(error);
+                    cbFunc(error);
+                }
+                else {
+
+                    if (resultado.length > 0)
+                        //Si hay records los devolvemos
+                        return cbFunc(null, resultado);
+                    else
+                        return cbFunc(null, []);
+                }
+            });
+
+        });
+
+    },
+
     InsertaRecord: function (record, cbFunc) {
 
         var Request = require('tedious').Request
@@ -220,20 +247,7 @@ module.exports = {
                 }
             });
 
-            /*
-            request.on('row', function (columns) {
-                columns.forEach(function (column) {
-                    if (column.value === null) {
-                        console.log('NULL');
-                    } else {
-                        console.log("El id del user insertado es: " + column.value);
-                        resultado = column.value;
-                    }
-                });
-                //Devolvemos id del user en el callback
-                cbFunc(null, resultado);
-            });
-            */
+
             request.on('requestCompleted', function () {
 
                 //Devolvemos un true

@@ -213,7 +213,7 @@ module.exports = {
         var connection = this.Conectar(function (error, conexion) {
 
             //Cuando responda la conexion ejecutamos el select
-            self.EjecutaSelect(conexion, "SELECT TOP 10 * FROM Records ORDER BY puntos Desc;", function (error, resultado) {
+            self.EjecutaSelect(conexion, "SELECT TOP 10 u.nombre,r.puntos FROM Records r, Users u WHERE r.idUser = u.id ORDER BY r.puntos Desc;", function (error, resultado) {
                 if (error) {
                     console.log(error);
                     cbFunc(error);
